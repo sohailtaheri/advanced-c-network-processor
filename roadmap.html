@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced C Network Message Processor - Development Roadmap</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .stat-box {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-box .number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-box .label {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .phase {
+            margin-bottom: 30px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .phase:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .phase-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .phase.completed .phase-header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        
+        .phase-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .phase-duration {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .phase-body {
+            padding: 25px;
+            background: white;
+        }
+        
+        .phase-body.collapsed {
+            display: none;
+        }
+        
+        .milestone {
+            margin-bottom: 20px;
+            padding-left: 20px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .milestone h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .task {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+        
+        .task:hover {
+            background: #f8f9fa;
+        }
+        
+        .task input[type="checkbox"] {
+            margin-right: 10px;
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .task label {
+            cursor: pointer;
+            flex: 1;
+            color: #495057;
+        }
+        
+        .task input[type="checkbox"]:checked + label {
+            text-decoration: line-through;
+            color: #adb5bd;
+        }
+        
+        .skills-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .skills-section h5 {
+            color: #495057;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .skill-tag {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin: 4px;
+        }
+        
+        .toggle-icon {
+            transition: transform 0.3s;
+        }
+        
+        .phase-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Advanced C Network Message Processor</h1>
+            <p>Development Roadmap - 5G Layer 2 & IP Packet Processing</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="number" id="totalPhases">5</div>
+                <div class="label">Total Phases</div>
+            </div>
+            <div class="stat-box">
+                <div class="number" id="completedTasks">0</div>
+                <div class="label">Tasks Completed</div>
+            </div>
+            <div class="stat-box">
+                <div class="number" id="progressPercent">0%</div>
+                <div class="label">Overall Progress</div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="phase" data-phase="1">
+                <div class="phase-header" onclick="togglePhase(1)">
+                    <span class="phase-title">Phase 1: Foundation & Basic Message Generation</span>
+                    <span class="phase-duration">Week 1-2</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="phase-body">
+                    <div class="milestone">
+                        <h4>📋 Project Setup & Core Structure</h4>
+                        <div class="task">
+                            <input type="checkbox" id="task1-1" onchange="updateProgress()">
+                            <label for="task1-1">Set up project structure with Makefile</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task1-2" onchange="updateProgress()">
+                            <label for="task1-2">Implement basic logging framework (custom printf wrapper)</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task1-3" onchange="updateProgress()">
+                            <label for="task1-3">Create header files for message structures (IP, 5G Layer 2)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="milestone">
+                        <h4>📦 Basic Message Generation</h4>
+                        <div class="task">
+                            <input type="checkbox" id="task1-4" onchange="updateProgress()">
+                            <label for="task1-4">Implement IP packet header structure and generation</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task1-5" onchange="updateProgress()">
+                            <label for="task1-5">Create basic 5G MAC PDU structure generator</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task1-6" onchange="updateProgress()">
+                            <label for="task1-6">Write unit tests using simple assert macros</label>
+                        </div>
+                    </div>
+                    
+                    <div class="skills-section">
+                        <h5>🎯 Skills You'll Practice:</h5>
+                        <span class="skill-tag">Struct packing</span>
+                        <span class="skill-tag">Bitwise operations</span>
+                        <span class="skill-tag">Memory alignment</span>
+                        <span class="skill-tag">Header files</span>
+                        <span class="skill-tag">Makefile</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase" data-phase="2">
+                <div class="phase-header" onclick="togglePhase(2)">
+                    <span class="phase-title">Phase 2: Advanced Buffering System</span>
+                    <span class="phase-duration">Week 3-4</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="phase-body">
+                    <div class="milestone">
+                        <h4>🔄 Ring Buffer Implementation</h4>
+                        <div class="task">
+                            <input type="checkbox" id="task2-1" onchange="updateProgress()">
+                            <label for="task2-1">Implement lock-free single producer/consumer ring buffer</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task2-2" onchange="updateProgress()">
+                            <label for="task2-2">Add memory barrier operations (volatile, atomic ops)</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task2-3" onchange="updateProgress()">
+                            <label for="task2-3">Create buffer statistics tracking (drops, utilization)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="milestone">
+                        <h4>💾 Memory Pool Management</h4>
+                        <div class="task">
+                            <input type="checkbox" id="task2-4" onchange="updateProgress()">
+                            <label for="task2-4">Design custom memory allocator for message buffers</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task2-5" onchange="updateProgress()">
+                            <label for="task2-5">Implement free list for buffer recycling</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task2-6" onchange="updateProgress()">
+                            <label for="task2-6">Add buffer leak detection and memory profiling</label>
+                        </div>
+                    </div>
+                    
+                    <div class="skills-section">
+                        <h5>🎯 Skills You'll Practice:</h5>
+                        <span class="skill-tag">Lock-free programming</span>
+                        <span class="skill-tag">Memory management</span>
+                        <span class="skill-tag">Atomic operations</span>
+                        <span class="skill-tag">Cache optimization</span>
+                        <span class="skill-tag">Custom allocators</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase" data-phase="3">
+                <div class="phase-header" onclick="togglePhase(3)">
+                    <span class="phase-title">Phase 3: Multi-Processing Architecture</span>
+                    <span class="phase-duration">Week 5-7</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="phase-body">
+                    <div class="milestone">
+                        <h4>🔀 Process Management</h4>
+                        <div class="task">
+                            <input type="checkbox" id="task3-1" onchange="updateProgress()">
+                            <label for="task3-1">Implement fork()-based worker process pool</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task3-2" onchange="updateProgress()">
+                            <label for="task3-2">Create shared memory segments for inter-process buffers</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task3-3" onchange="updateProgress()">
+                            <label for="task3-3">Add process monitoring and restart capability</label>
+                        </div>
+                    </div>
+                    
+                    <div class="milestone">
+                        <h4>📡 IPC Mechanisms</h4>
+                        <div class="task">
+                            <input type="checkbox" id="task3-4" onchange="updateProgress()">
+                            <label for="task3-4">Implement message queues (POSIX mq_*)</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task3-5" onchange="updateProgress()">
+                            <label for="task3-5">Add semaphore-based synchronization</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task3-6" onchange="updateProgress()">
+                            <label for="task3-6">Create Unix domain socket control channel</label>
+                        </div>
+                    </div>
+                    
+                    <div class="milestone">
+                        <h4>⚙️ Thread Pool (Alternative/Hybrid)</h4>
+                        <div class="task">
+                            <input type="checkbox" id="task3-7" onchange="updateProgress()">
+                            <label for="task3-7">Implement pthread-based worker threads</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task3-8" onchange="updateProgress()">
+                            <label for="task3-8">Add thread-local storage for per-thread state</label>
+                        </div>
+                    </div>
+                    
+                    <div class="skills-section">
+                        <h5>🎯 Skills You'll Practice:</h5>
+                        <span class="skill-tag">fork() & exec()</span>
+                        <span class="skill-tag">Shared memory (shm)</span>
+                        <span class="skill-tag">POSIX IPC</span>
+                        <span class="skill-tag">pthread</span>
+                        <span class="skill-tag">Semaphores</span>
+                        <span class="skill-tag">Signal handling</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase" data-phase="4">
+                <div class="phase-header" onclick="togglePhase(4)">
+                    <span class="phase-title">Phase 4: Message Analysis & Processing</span>
+                    <span class="phase-duration">Week 8-10</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="phase-body">
+                    <div class="milestone">
+                        <h4>🔍 IP Packet Analysis</h4>
+                        <div class="task">
+                            <input type="checkbox" id="task4-1" onchange="updateProgress()">
+                            <label for="task4-1">Parse IPv4/IPv6 headers and validate checksums</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task4-2" onchange="updateProgress()">
+                            <label for="task4-2">Extract and analyze TCP/UDP/ICMP payloads</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task4-3" onchange="updateProgress()">
+                            <label for="task4-3">Implement basic flow tracking (5-tuple hash table)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="milestone">
+                        <h4>📶 5G Layer 2 Processing</h4>
+                        <div class="task">
+                            <input type="checkbox" id="task4-4" onchange="updateProgress()">
+                            <label for="task4-4">Decode MAC PDU headers (R/F/LCID fields)</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task4-5" onchange="updateProgress()">
+                            <label for="task4-5">Handle MAC subheaders and SDU extraction</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task4-6" onchange="updateProgress()">
+                            <label for="task4-6">Implement basic RLC AM/UM segment reassembly</label>
+                        </div>
+                    </div>
+                    
+                    <div class="milestone">
+                        <h4>📊 Statistics & Metrics</h4>
+                        <div class="task">
+                            <input type="checkbox" id="task4-7" onchange="updateProgress()">
+                            <label for="task4-7">Create real-time throughput calculator</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task4-8" onchange="updateProgress()">
+                            <label for="task4-8">Track packet/PDU error rates and latency</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task4-9" onchange="updateProgress()">
+                            <label for="task4-9">Generate periodic statistics reports</label>
+                        </div>
+                    </div>
+                    
+                    <div class="skills-section">
+                        <h5>🎯 Skills You'll Practice:</h5>
+                        <span class="skill-tag">Protocol parsing</span>
+                        <span class="skill-tag">Checksum algorithms</span>
+                        <span class="skill-tag">Hash tables</span>
+                        <span class="skill-tag">Bit manipulation</span>
+                        <span class="skill-tag">State machines</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase" data-phase="5">
+                <div class="phase-header" onclick="togglePhase(5)">
+                    <span class="phase-title">Phase 5: Integration, Testing & Optimization</span>
+                    <span class="phase-duration">Week 11-12</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="phase-body">
+                    <div class="milestone">
+                        <h4>🔗 End-to-End Integration</h4>
+                        <div class="task">
+                            <input type="checkbox" id="task5-1" onchange="updateProgress()">
+                            <label for="task5-1">Connect generator → buffer → workers → analyzer pipeline</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task5-2" onchange="updateProgress()">
+                            <label for="task5-2">Add configuration file support (ini/json parser)</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task5-3" onchange="updateProgress()">
+                            <label for="task5-3">Create command-line interface for runtime control</label>
+                        </div>
+                    </div>
+                    
+                    <div class="milestone">
+                        <h4>🧪 Testing & Validation</h4>
+                        <div class="task">
+                            <input type="checkbox" id="task5-4" onchange="updateProgress()">
+                            <label for="task5-4">Write stress tests with high message rates</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task5-5" onchange="updateProgress()">
+                            <label for="task5-5">Use valgrind for memory leak detection</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task5-6" onchange="updateProgress()">
+                            <label for="task5-6">Run helgrind/DRD for race condition detection</label>
+                        </div>
+                    </div>
+                    
+                    <div class="milestone">
+                        <h4>⚡ Performance Optimization</h4>
+                        <div class="task">
+                            <input type="checkbox" id="task5-7" onchange="updateProgress()">
+                            <label for="task5-7">Profile with perf/gprof to find bottlenecks</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task5-8" onchange="updateProgress()">
+                            <label for="task5-8">Optimize hot paths (inline, loop unrolling)</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task5-9" onchange="updateProgress()">
+                            <label for="task5-9">Add CPU affinity and NUMA awareness</label>
+                        </div>
+                    </div>
+                    
+                    <div class="milestone">
+                        <h4>📚 Documentation</h4>
+                        <div class="task">
+                            <input type="checkbox" id="task5-10" onchange="updateProgress()">
+                            <label for="task5-10">Write architecture documentation</label>
+                        </div>
+                        <div class="task">
+                            <input type="checkbox" id="task5-11" onchange="updateProgress()">
+                            <label for="task5-11">Create API reference for reusable components</label>
+                        </div>
+                    </div>
+                    
+                    <div class="skills-section">
+                        <h5>🎯 Skills You'll Practice:</h5>
+                        <span class="skill-tag">Integration testing</span>
+                        <span class="skill-tag">Valgrind</span>
+                        <span class="skill-tag">Performance profiling</span>
+                        <span class="skill-tag">CPU pinning</span>
+                        <span class="skill-tag">Optimization techniques</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePhase(phaseNum) {
+            const phase = document.querySelector(`[data-phase="${phaseNum}"]`);
+            const body = phase.querySelector('.phase-body');
+            const header = phase.querySelector('.phase-header');
+            
+            body.classList.toggle('collapsed');
+            header.classList.toggle('collapsed');
+        }
+
+        function updateProgress() {
+            const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+            const checkedBoxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            
+            const total = allCheckboxes.length;
+            const completed = checkedBoxes.length;
+            const percentage = Math.round((completed / total) * 100);
+            
+            document.getElementById('completedTasks').textContent = `${completed}/${total}`;
+            document.getElementById('progressPercent').textContent = `${percentage}%`;
+            
+            // Save progress to localStorage
+            const progress = {};
+            allCheckboxes.forEach(cb => {
+                progress[cb.id] = cb.checked;
+            });
+            localStorage.setItem('roadmapProgress', JSON.stringify(progress));
+        }
+
+        // Load saved progress
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('roadmapProgress');
+            if (saved) {
+                const progress = JSON.parse(saved);
+                Object.keys(progress).forEach(id => {
+                    const checkbox = document.getElementById(id);
+                    if (checkbox) {
+                        checkbox.checked = progress[id];
+                    }
+                });
+                updateProgress();
+            }
+        });
+    </script>
+</body>
+</html>
